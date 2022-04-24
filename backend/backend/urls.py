@@ -1,4 +1,4 @@
-"""backendlibrary URL Configuration
+"""backend URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
@@ -16,6 +16,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import RedirectView
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+urlpatterns += [
+    path('', RedirectView.as_view(url='librarybackend/', permanent=True)),
+]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
