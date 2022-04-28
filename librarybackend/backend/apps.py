@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class LibrarybackendConfig(AppConfig):
+class BackendConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'librarybackend'
+    name = 'backend'
