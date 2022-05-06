@@ -1,6 +1,7 @@
 from multiprocessing import context
 from django.shortcuts import render
 from . import models
+import PIL
 
 def index(request):
     
@@ -40,11 +41,14 @@ def grid(request):
     file_size = len(files)
     images = {}
 
-    for i in range(0, files):
+    for i in range(0, file_size):
         image = {
-            'title': files[0].title,
-            'description': files[0].description,
-            'image_file': files[0].uploadedFile
+            'title': files[i].title,
+            'description': files[i].description,
+            'image_file': files[i].uploadedFile
         }
+        #print(image)
+        images[i] = image
+    print(images)
 
     return render(request, 'grid.html', context=images)

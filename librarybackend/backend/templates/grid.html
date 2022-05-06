@@ -1,5 +1,18 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>File Path</th>
+        <th>Upload Date & Time</th>
+    </tr>
+    {% for image in images %}
+    <tr>
+        <td>{{ file.images.title }}</td>
+        <td>{{ file.images.description }}</td>
+        <td>{{ file.images.uploadedFile.url }}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
