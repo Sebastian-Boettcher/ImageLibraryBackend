@@ -1,7 +1,9 @@
 from multiprocessing import context
 from django.shortcuts import render
 from . import models
-import PIL
+from django.views.decorators.csrf import csrf_exempt
+#import PIL
+from django.http import JsonResponse
 
 def index(request):
     
@@ -34,6 +36,7 @@ def upload(request):
     }
     return render(request, 'upload.html', context=context)
 
+@csrf_exempt
 def grid(request):
     
     files = models.Image.objects.all()
@@ -45,10 +48,9 @@ def grid(request):
         image = {
             'title': files[i].title,
             'description': files[i].description,
-            'image_file': files[i].uploadedFile
+            #'image_file': files[i].uploadedFile
         }
-        #print(image)
         images[i] = image
-    print(images)
+    print("Complete")
 
-    return render(request, 'grid.html', context=images)
+    return JsonResponse(images, safe=False)
