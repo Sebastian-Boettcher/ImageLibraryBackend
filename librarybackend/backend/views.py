@@ -1,9 +1,13 @@
 from multiprocessing import context
-from django.shortcuts import render
-from . import models
+from urllib import response
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
-#import PIL
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponseRedirect
+from .forms import UploadForm
+from . import models
+from .models import Upload
+
 
 def index(request):
     
@@ -12,45 +16,60 @@ def index(request):
     }
     return render(request, 'index.html', context=context)
 
-def upload(request):
-    
+
+@csrf_exempt  
+def upload_image(request):
+    context = {} 
     if request.method == "POST":
-    # Fetching the form data
-        fileTitle = request.POST["title"]
-        description = request.POST["description"]
-        uploadedFile = request.FILES["uploadedFile"]
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            print('Is valid!')
+            description = form.cleaned_data.get("description")
+            img = form.cleaned_data.get("img")
 
-        # Saving the information in the database
-        image = models.Image(
-            title = fileTitle,
-            description = description,
-            uploadedFile = uploadedFile
-        )
-        image.save()
+            obj = Upload.objects.create(                
+                descript = description,
+                uploadedFile = img
+            )
+            obj.save()
+            print(obj)
+            return HttpResponse('Form is valid and it worked!')
+        else:
+            res = 'The form is not Valid!'
+            return HttpResponse(res)    
+        
+    else: 
+        form = UploadForm()
+        context['form']= form
 
-    images = models.Image.objects.all()
-    context = {
-        'title': 'Upload new images!',
-        "files": images
-
-    }
+    #return HttpResponse('Ended')    
     return render(request, 'upload.html', context=context)
+
 
 @csrf_exempt
 def grid(request):
     
-    files = models.Image.objects.all()
+    files = Upload.objects.all()
     #print(all_images[0].title)
     file_size = len(files)
     images = {}
 
     for i in range(0, file_size):
         image = {
-            'title': files[i].title,
             'description': files[i].description,
             #'image_file': files[i].uploadedFile
         }
         images[i] = image
-    print("Complete")
+    print("Send!")
 
     return JsonResponse(images, safe=False)
+
+@csrf_exempt
+def success(request):
+    print("Succeed")
+    return render(request, 'success.html', {'msg': 'It Worked! 200 :D'})
+
+@csrf_exempt
+def error(request):
+    print("Error 404")
+    return render(request, 'error.html', {'msg': 'Ups, something went wrong! 404 :('})

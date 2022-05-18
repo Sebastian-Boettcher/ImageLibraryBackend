@@ -1,7 +1,5 @@
 from django.db import models
-
-class Image(models.Model):
-    title = models.CharField(max_length = 200)
-    description = models.CharField(max_length= 600)
-    uploadedFile = models.ImageField(upload_to = "Uploaded Files/")
-    dateTimeOfUpload = models.DateTimeField(auto_now = True)
+# Create your models here.
+class Upload(models.Model):
+    #description = models.CharField(max_length= 600, default='')
+    img = models.ImageField(upload_to = "Uploaded Files/")
