@@ -8,15 +8,12 @@ from .forms import UploadForm
 from . import models
 from .models import Upload
 
-
 def index(request):
-    
     context = {
         'welcome': 'Backend for the Application!'
     }
     return render(request, 'index.html', context=context)
-
-
+#POST-/GET-Request--------------------------------------------------------------------
 @csrf_exempt  
 def upload_image(request):
     context = {} 
@@ -28,14 +25,15 @@ def upload_image(request):
             img = form.cleaned_data.get("img")
 
             obj = Upload.objects.create(                
-                descript = description,
-                uploadedFile = img
+                description = description,
+                img = img
             )
             obj.save()
             print(obj)
             return HttpResponse('Form is valid and it worked!')
         else:
-            res = 'The form is not Valid!'
+            res = form.errors.as_json()
+            print(res)
             return HttpResponse(res)    
         
     else: 
@@ -45,25 +43,18 @@ def upload_image(request):
     #return HttpResponse('Ended')    
     return render(request, 'upload.html', context=context)
 
-
 @csrf_exempt
 def grid(request):
     
-    files = Upload.objects.all()
-    #print(all_images[0].title)
-    file_size = len(files)
-    images = {}
-
-    for i in range(0, file_size):
-        image = {
-            'description': files[i].description,
-            #'image_file': files[i].uploadedFile
+    img_object = Upload.objects.all()
+    
+    files = {
+          'img_object': img_object,
         }
-        images[i] = image
-    print("Send!")
 
-    return JsonResponse(images, safe=False)
-
+    return render(request, 'grid.html', context=files)
+#----------------------------------------------------------------------
+#Error/Success Routes
 @csrf_exempt
 def success(request):
     print("Succeed")
