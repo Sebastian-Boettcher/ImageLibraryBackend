@@ -1,5 +1,7 @@
 from multiprocessing import context
+import re
 from urllib import response
+from django.forms import formset_factory
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
@@ -21,16 +23,19 @@ def upload_image(request):
         form = UploadForm(request.POST, request.FILES)
         if form.is_valid():
             print('Is valid!')
-            description = form.cleaned_data.get("description")
             img = form.cleaned_data.get("img")
+            description = form.cleaned_data.get("description")
+        
+            print(img)
 
             obj = Upload.objects.create(                
                 description = description,
                 img = img
             )
+
             obj.save()
-            print(obj)
-            return HttpResponse('Form is valid and it worked!')
+            print('Description: ' , obj.description ,' img_file: ',obj.img)
+            return HttpResponse(obj.description)
         else:
             res = form.errors.as_json()
             print(res)
@@ -40,7 +45,6 @@ def upload_image(request):
         form = UploadForm()
         context['form']= form
 
-    #return HttpResponse('Ended')    
     return render(request, 'upload.html', context=context)
 
 @csrf_exempt

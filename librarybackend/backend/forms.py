@@ -4,5 +4,5 @@ from .models import Upload
 class UploadForm(ModelForm):
     class Meta:
         model = Upload
-        fields = ['img',]
+        fields = ['description','img',]
 
