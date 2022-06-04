@@ -10,32 +10,29 @@ from .forms import UploadForm
 from . import models
 from .models import Upload
 
+@csrf_exempt  
 def index(request):
     context = {
         'welcome': 'Backend for the Application!'
     }
     return render(request, 'index.html', context=context)
 #POST-/GET-Request--------------------------------------------------------------------
+
 @csrf_exempt  
 def upload_image(request):
     context = {} 
     if request.method == "POST":
-        form = UploadForm(request.POST, request.FILES)
+        form = UploadForm(request.POST, request.FILES)  #Get Multiple Images and only one Descriptions
         if form.is_valid():
-            print('Is valid!')
             img = form.cleaned_data.get("img")
             description = form.cleaned_data.get("description")
-        
-            print(img)
-
             obj = Upload.objects.create(                
                 description = description,
                 img = img
             )
-
             obj.save()
             print('Description: ' , obj.description ,' img_file: ',obj.img)
-            return HttpResponse(obj.description)
+            return HttpResponse('It Worked!')
         else:
             res = form.errors.as_json()
             print(res)
