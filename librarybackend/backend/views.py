@@ -1,14 +1,23 @@
 from multiprocessing import context
-import re
 from urllib import response
 from django.forms import formset_factory
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponseRedirect
+import json
+import base64
 from .forms import UploadForm
 from . import models
 from .models import Upload
+from rest_framework import serializers
+
+class File(object):
+    def __init__(self,image):
+        self.image = image
+
+class FileSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+
 
 @csrf_exempt  
 def index(request):
@@ -46,14 +55,23 @@ def upload_image(request):
 
 @csrf_exempt
 def grid(request):
-    
-    img_object = Upload.objects.all()
-    
+    img_object = list(Upload.objects.all())
     files = {
-          'img_object': img_object,
-        }
+        'data': []
+    }
+    for x in range(0, len(img_object)):
+        img = File(img_object[x].img)
+        serialized_img = FileSerializer(img)
+        uploads = {}
+        #with open(img,"rb") as img_file:
+        #    b64_string = base64.b64encode(img_file.read())
+        #    print(b64_string)
+        uploads['Img'] = serialized_img.data
+        uploads['Description'] = img_object[x].description
+        print(uploads)
+        files['data'].append(uploads)
+    return JsonResponse(files)
 
-    return render(request, 'grid.html', context=files)
 #----------------------------------------------------------------------
 #Error/Success Routes
 @csrf_exempt
