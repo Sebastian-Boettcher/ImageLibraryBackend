@@ -57,8 +57,11 @@ def upload_image(request):
 def grid(request):
     img_object = list(Upload.objects.all())
     files = {
-        'data': []
+        'data'  : [],
+        'length': 0,
     }
+    files['length'] = len(img_object) #Länge der 
+
     for x in range(0, len(img_object)):
         img = File(img_object[x].img)
         serialized_img = FileSerializer(img)
@@ -70,8 +73,10 @@ def grid(request):
         uploads['Description'] = img_object[x].description
         print(uploads)
         files['data'].append(uploads)
+    #JsonRes = json.dumps(files)
+    #return HttpResponse(JsonRes)
     return JsonResponse(files)
-
+#
 #----------------------------------------------------------------------
 #Error/Success Routes
 @csrf_exempt
