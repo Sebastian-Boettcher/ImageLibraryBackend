@@ -40,7 +40,6 @@ def upload_image(request):
                 img = img
             )
             obj.save()
-            print('Description: ' , obj.description ,' img_file: ',obj.img)
             return HttpResponse('It Worked!')
         else:
             res = form.errors.as_json()
@@ -71,10 +70,8 @@ def grid(request):
         #    print(b64_string)
         uploads['Img'] = serialized_img.data
         uploads['Description'] = img_object[x].description
-        print(uploads)
         files['data'].append(uploads)
-    #JsonRes = json.dumps(files)
-    #return HttpResponse(JsonRes)
+
     return JsonResponse(files)
 #
 #----------------------------------------------------------------------
